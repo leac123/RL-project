@@ -2,6 +2,7 @@ import numpy as np
 from scipy.integrate import odeint
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
+from matplotlib import animation
 
 class cartPendulum():
     def __init__(self, mass_cart = 1, mass_pendulum = 1, length_pendulum = 1, x0 = [0, 0, 0, 0], gravity = 9.81):
@@ -42,16 +43,22 @@ class cartPendulum():
     
     def render(self, cancel = False):
         if cancel:
-            plt.ioff()
-        else:
-            plt.ion()
-            plt.clf()
-            # create a rectangular cart
-            rect = Rectangle([self.x[0] - 0.2, -0.1],0.4, 0.2, fill=True, color='red', ec='black')
-            ax = plt.axes(xlim=(-2, 2), ylim=(-1.1, 1.1), aspect='equal')
-            ax.add_patch(rect)
-            plt.plot([self.x[0], self.x[0] + np.sin(self.x[1])], [0, np.cos(self.x[1])], marker = 'o')
-            plt.pause(0.01)
+            try:
+                self.anim.event_source.stop()
+            except:
+                pass
+        
+        fig = plt.figure()
+        ax = plt.axes(xlim=(-2, 2), ylim=(-1.1, 1.1), aspect='equal')
+        line, = ax.plot([], [], lw=2, marker='o', markersize=6)
+        rect = Rectangle([self.x[0] - 0.2, -0.1],0.4, 0.2, fill=True, color='red', ec='black')
+        ax.add_patch(rect)
+        
+        animate = lambda args: (rect.set_xy([self.x[0] - 0.2, -0.1]), 
+                                line.set_data([self.x[0], self.x[0] + np.sin(self.x[1])],[0, np.cos(self.x[1])]))
+        self.anim = animation.FuncAnimation(fig, animate, interval=200)
+        plt.show()
+        return self.anim
             
     def reward(self, state):
         return 1 if np.abs(state[1]) < 0.5 else 0  #-(state[0]**2 + state[1]**2) #+ state[2]**2 + state[3]**2)

@@ -41,7 +41,7 @@ class pendulum():
         ax = plt.axes(xlim=(-2, 2), ylim=(-1.1, 1.1), aspect='equal')
         line, = ax.plot([], [], lw=2, marker='o', markersize=6)
         animate = lambda args: line.set_data([0, np.sin(self.x[0])], [0, np.cos(self.x[0])])
-        self.anim = animation.FuncAnimation(fig, animate, interval=1)
+        self.anim = animation.FuncAnimation(fig, animate, interval=200)
         plt.show()
         return self.anim
         
