@@ -47,6 +47,9 @@ class gridWorld(object):
         return self.rewards[state]
     
     def transition_probability(self, s_next, s, a):
+        if self.terminal[s] > 0:
+            return 0
+        
         if(a == 'D'):
             straight = (s[0] + 1, s[1])
             right = (s[0], s[1] + 1)
