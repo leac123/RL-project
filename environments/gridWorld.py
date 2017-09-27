@@ -1,21 +1,13 @@
+import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle
+from matplotlib import colors
 import numpy as np
+import json
 
 class gridWorld(object):
-    def __init__(self):
-        self.rewards = np.array([[-0.04, -0.04, -0.04,     1],
-                                 [-0.04, -0.04, -0.04,    -1], 
-                                 [-0.04, -0.04, -0.04, -0.04]])
-        
-        self.board_mask = np.array([[0, 0, 0, 0],
-                                    [0, 1, 0, 0],
-                                    [0, 0, 0, 0]])
-        
-        self.terminal = np.array([[0, 0, 0, 1],
-                                  [0, 0, 0, 1],
-                                  [0, 0, 0, 0]])
-        
-        self.state = (2, 0)
-        self.p = 0.8
+    def __init__(self, file = "gridworlds/tiny.json"):
+        self.load_from_file(file)
+
     def __repr__(self):
         string = ""
         for y in range(self.board_mask.shape[0]):
@@ -97,5 +89,46 @@ class gridWorld(object):
         self.state = states[np.random.choice(idx, p = probs)]  
 
         
-    def render(self):
-        print(self)
+    def render(self, show_reward = True, show_state = True, show_terminal = True):
+        # create discrete colormap
+        cmap = colors.ListedColormap(['white', 'gray'])
+        
+        fig, ax = plt.subplots()
+        ax.imshow(self.board_mask, cmap=cmap)
+        
+        # draw gridlines
+        ax.grid(which='major', axis='both', linestyle='-', color='k', linewidth=2)
+        ax.set_xticks(np.arange(-.5, self.board_mask.shape[1] , 1));
+        ax.set_yticks(np.arange(-.5, self.board_mask.shape[0] , 1));
+        
+        patches = []
+        
+        if show_terminal:
+            for x in range(self.terminal.shape[1]):
+                for y in range(self.terminal.shape[0]):
+                    if self.terminal[(y, x)] > 0:
+                        patches.append(Rectangle((x-0.45, y-0.45), 0.9, 0.9, edgecolor = 'k', fill = False))
+        
+        if show_state:
+            patches.append(plt.Circle((self.state[1], self.state[0]), radius=0.2, color='b'))
+        
+        if show_reward:
+            for x in range(self.rewards.shape[1]):
+                for y in range(self.rewards.shape[0]):
+                    ax.annotate(self.rewards[(y, x)], (x-0.4,y+0.4))
+        
+        for patch in patches:
+            ax.add_patch(patch)
+            
+        ax.set_yticklabels([])
+        ax.set_xticklabels([])
+        plt.show()
+        
+    def load_from_file(self, filename):
+        with open(filename) as file:
+            data = json.load(file)
+        self.state = (data['initial_state'][0], data['initial_state'][1])
+        self.board_mask = np.array(data['board_mask'])
+        self.terminal = np.array(data['terminal'])
+        self.rewards = np.array(data['rewards'])
+        self.p = data['probability']
