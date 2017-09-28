@@ -89,7 +89,7 @@ class gridWorld(object):
         self.state = states[np.random.choice(idx, p = probs)]  
 
         
-    def render(self, show_reward = True, show_state = True, show_terminal = True):
+    def render(self, show_reward = True, show_state = True, show_terminal = True, show = True):
         # create discrete colormap
         cmap = colors.ListedColormap(['white', 'gray'])
         
@@ -115,14 +115,19 @@ class gridWorld(object):
         if show_reward:
             for x in range(self.rewards.shape[1]):
                 for y in range(self.rewards.shape[0]):
-                    ax.annotate(self.rewards[(y, x)], (x-0.4,y+0.4))
+                    if self.board_mask[(y, x)] == 0:
+                        ax.annotate(self.rewards[(y, x)], (x-0.4,y+0.4))
         
         for patch in patches:
             ax.add_patch(patch)
             
         ax.set_yticklabels([])
         ax.set_xticklabels([])
-        plt.show()
+        
+        if show:
+            plt.show()
+            
+        return fig
         
     def load_from_file(self, filename):
         with open(filename) as file:
