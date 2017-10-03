@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from matplotlib import animation
 from matplotlib.patches import Rectangle
 from matplotlib import colors
 import numpy as np
@@ -98,12 +99,18 @@ class gridWorld(object):
                 states.append(s_next)
                 probs.append(self.transition_probability(s_next, self.current_state, action))
                 
-        self.current_state = states[np.random.choice(idx, p = probs)]  
+        self.current_state = states[np.random.choice(idx, p = probs)] 
+        
+    def update_circle(self, circ):
+        circ.center = (self.current_state[1], self.current_state[0])
+        return circ
 
         
-    def render(self, show_reward = True, show_state = True, show_terminal = True, show = True):
+    def render(self, show_reward = True, show_state = True, show_terminal = True, show = True, return_animation = False):
         # create discrete colormap
         cmap = colors.ListedColormap(['white', 'gray'])
+        
+        plt.ion()
         
         fig, ax = plt.subplots()
         ax.imshow(self.board_mask, cmap=cmap)
@@ -121,8 +128,9 @@ class gridWorld(object):
                     if self.terminal[(y, x)] > 0:
                         patches.append(Rectangle((x-0.45, y-0.45), 0.9, 0.9, edgecolor = 'k', fill = False))
         
+        circ = plt.Circle((self.current_state[1], self.current_state[0]), radius=0.2, color='b')
         if show_state:
-            patches.append(plt.Circle((self.current_state[1], self.current_state[0]), radius=0.2, color='b'))
+            patches.append(circ)
         
         if show_reward:
             for x in range(self.rewards.shape[1]):
@@ -133,11 +141,17 @@ class gridWorld(object):
         for patch in patches:
             ax.add_patch(patch)
             
+        animate = lambda args: self.update_circle(circ)
+            
         ax.set_yticklabels([])
         ax.set_xticklabels([])
         
         if show:
             plt.show()
+            
+        if return_animation:
+            self.anim = animation.FuncAnimation(fig, animate, interval=200)
+            return self.anim
             
         return fig
         
