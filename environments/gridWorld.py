@@ -12,17 +12,26 @@ class gridWorld(object):
         string = ""
         for y in range(self.board_mask.shape[0]):
             for x in range(self.board_mask.shape[1]):
-                if self.state == (y, x):
+                if self.current_state == (y, x):
                     string += 'o\t'
                 else:
                     string += "{} \t".format(self.board_mask[(y, x)])
             string += "\n"
         return string
         
+    def init(self, state = None):
+        if (type(state) == type(None)):
+            x = np.random.choice(self.board_mask.shape[1])
+            y = np.random.choice(self.board_mask.shape[0])
+            self.current_state = (y, x)
+        else:
+            self.current_state = state
+        return self.state()
+        
         
     def actions(self, state = None):
         if type(state) == type(None):
-            state = self.state
+            state = self.current_state
         if self.terminal[state] > 0:
             return []
         return ['U', 'D', 'L', 'R']
@@ -35,8 +44,11 @@ class gridWorld(object):
     
     def reward(self, state = None):
         if type(state) == type(None):
-            state = self.state
+            state = self.current_state
         return self.rewards[state]
+    
+    def state(self):
+        return self.current_state
     
     def transition_probability(self, s_next, s, a):
         if self.terminal[s] > 0:
@@ -80,13 +92,13 @@ class gridWorld(object):
         idx = []
         i = 0
         for s_next in self.states():
-            if self.transition_probability(s_next, self.state, action) > 0:
+            if self.transition_probability(s_next, self.current_state, action) > 0:
                 idx.append(i)
                 i+= 1
                 states.append(s_next)
-                probs.append(self.transition_probability(s_next, self.state, action))
+                probs.append(self.transition_probability(s_next, self.current_state, action))
                 
-        self.state = states[np.random.choice(idx, p = probs)]  
+        self.current_state = states[np.random.choice(idx, p = probs)]  
 
         
     def render(self, show_reward = True, show_state = True, show_terminal = True, show = True):
@@ -110,7 +122,7 @@ class gridWorld(object):
                         patches.append(Rectangle((x-0.45, y-0.45), 0.9, 0.9, edgecolor = 'k', fill = False))
         
         if show_state:
-            patches.append(plt.Circle((self.state[1], self.state[0]), radius=0.2, color='b'))
+            patches.append(plt.Circle((self.current_state[1], self.current_state[0]), radius=0.2, color='b'))
         
         if show_reward:
             for x in range(self.rewards.shape[1]):
@@ -132,7 +144,7 @@ class gridWorld(object):
     def load_from_file(self, filename):
         with open(filename) as file:
             data = json.load(file)
-        self.state = (data['initial_state'][0], data['initial_state'][1])
+        self.current_state = (data['initial_state'][0], data['initial_state'][1])
         self.board_mask = np.array(data['board_mask'])
         self.terminal = np.array(data['terminal'])
         self.rewards = np.array(data['rewards'])
