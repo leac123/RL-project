@@ -17,7 +17,7 @@ class pendulum():
         self.g = gravity
         
         # Pendulum differential equations
-        self.dx = lambda t, t_d, u : np.array([t_d, self.g/self.l*np.sin(t) + u])
+        self.dx = lambda t, t_d, u : np.array([t_d, self.g/self.l*np.sin(t) + u/(self.l*self.l*self.m)])
     
     def init(self, x0):
         self.x = np.array(x0)
