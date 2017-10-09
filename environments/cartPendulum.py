@@ -39,7 +39,7 @@ class cartPendulum():
     def step(self, action):
         # Scipy ODE solver for solving PDE
         self.x = self.transition(self.x, action)
-        return self.x
+        return self.state()
     
     def render(self, cancel = False):
         if cancel:
@@ -56,12 +56,12 @@ class cartPendulum():
         
         animate = lambda args: (rect.set_xy([self.x[0] - 0.2, -0.1]), 
                                 line.set_data([self.x[0], self.x[0] + np.sin(self.x[1])],[0, np.cos(self.x[1])]))
-        self.anim = animation.FuncAnimation(fig, animate, interval=200)
+        self.anim = animation.FuncAnimation(fig, animate, interval=40)
         plt.show()
         return self.anim
             
     def reward(self, state):
-        return 1 if np.abs(state[1]) < 0.5 else 0  #-(state[0]**2 + state[1]**2) #+ state[2]**2 + state[3]**2)
+        return 1 if np.abs(state[1]) < 0.5 else 0
     
     def states(self):
         return None
@@ -75,6 +75,9 @@ class cartPendulum():
     def init(self, x0 = [0, 0, 0, 0]):
         self.x = np.array(x0)
         return self.state()
+    
+    def termianl(self):
+        return None
         
         
 
