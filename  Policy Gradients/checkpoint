@@ -1,2 +1,0 @@
-model_checkpoint_path: "policy_net_cart_pendulum_swing_up.ckpt"
-all_model_checkpoint_paths: "policy_net_cart_pendulum_swing_up.ckpt"

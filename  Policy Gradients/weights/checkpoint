@@ -1,0 +1,2 @@
+model_checkpoint_path: "policy_gradient_cart_pendulum_balance.ckpt"
+all_model_checkpoint_paths: "policy_gradient_cart_pendulum_balance.ckpt"

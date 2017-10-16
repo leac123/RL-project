@@ -85,7 +85,7 @@ class cartPendulum():
 #m_c, m_p, l, theta, x, theta_dot, x_dot, u, g= sp.symbols('m_c, m_p, l, theta, x, theta_dot, x_dot u, g')
 #
 #mass_matrix = sp.Matrix([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, m_c + m_p, m_p*l*sp.cos(theta)],[0, 0, sp.cos(theta), l]])
-#forcing_matrix = sp.Matrix([[x_dot], [theta_dot], [m_c*l*theta_dot*theta_dot*sp.sin(theta) + u], [g*sp.sin(theta)]])
+#forcing_matrix = sp.Matrix([[x_dot], [theta_dot], [m_p*l*theta_dot*theta_dot*sp.sin(theta) + u], [g*sp.sin(theta)]])
 #
 #M = sp.utilities.lambdify([x, theta, x_dot, theta_dot], mass_matrix.subs([(m_c, 1), (m_p, 1), (l, 1)]))
 #F = sp.utilities.lambdify([x, theta, x_dot, theta_dot, u], forcing_matrix.subs([(m_c, 1), (g, 9.81), (l, 1)]))
