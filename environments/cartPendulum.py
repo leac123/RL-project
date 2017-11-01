@@ -5,7 +5,7 @@ from matplotlib.patches import Rectangle
 from matplotlib import animation
 
 class cartPendulum():
-    def __init__(self, mass_cart = 1, mass_pendulum = 1, length_pendulum = 1, x0 = [0, 0, 0, 0], gravity = 9.81):
+    def __init__(self, mass_cart = 1, mass_pendulum = 1, length_pendulum = 1, x0 = [0, 0, 0, 0], gravity = 9.81, cart_dampening = 0):
         # Internal state vector
         self.x = np.array(x0)
         
@@ -15,6 +15,7 @@ class cartPendulum():
         #internal parameters
         self.m_c = mass_cart
         self.m_p = mass_pendulum
+        self.c_d = cart_dampening
         self.l = length_pendulum
         self.g = gravity
         
@@ -26,7 +27,7 @@ class cartPendulum():
         # Forcing matrix
         self.F = lambda x, t, x_d, t_d, u : np.array([[x_d], 
                                                       [t_d], 
-                                                      [self.m_p*self.l*t_d*t_d*np.sin(t) + u], 
+                                                      [self.m_p*self.l*t_d*t_d*np.sin(t) - self.c_d*x_d+ u], 
                                                       [self.g*np.sin(t)]])
     
     def transition(self, state, action):
