@@ -24,7 +24,7 @@ class pendulum():
         return self.state()
     
     def transition(self, state, action):
-        # Scipy ODE solver for solving PDE
+        # Scipy ODE solver for solving ODE
         f = lambda y, t : self.dx(*y, action)
         return odeint(f, state, [0, self.step_size])[1, :]
     
