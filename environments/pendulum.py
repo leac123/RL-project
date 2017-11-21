@@ -30,7 +30,7 @@ class pendulum():
     
     def step(self, action):
         self.x = self.transition(self.x, action)
-        return self.x
+        return self.state()
     
     def render(self, cancel = False):
         try:
