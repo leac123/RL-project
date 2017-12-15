@@ -7,6 +7,7 @@ class pendulum():
     def __init__(self, mass = 1, length = 1, x0 = [0, 0], gravity = 9.81):
         # Internal state vector
         self.x = np.array(x0)
+        self.u = 0
         
         # Simulation parameters
         self.step_size = 0.01 
@@ -29,6 +30,7 @@ class pendulum():
         return odeint(f, state, [0, self.step_size])[1, :]
     
     def step(self, action):
+        self.u = action
         self.x = self.transition(self.x, action)
         return self.state()
     
